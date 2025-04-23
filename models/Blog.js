@@ -17,9 +17,6 @@ const PostSchema = new mongoose.Schema({
   },
   coverImage: {
     url: String,      // Cloudinary secure URL
-    publicId: String, // Cloudinary public ID for reference and deletion
-    width: Number,    // Image width
-    height: Number    // Image height
   },
   tags: [String],
   excerpt: {
