@@ -4,53 +4,49 @@ const PostSchema = new mongoose.Schema({
   title: {
     type: String,
     required: [true, 'Title is required'],
-    trim: true,
+    trim: true
   },
   category: {
     type: [String],
     required: [true, 'Category is required'],
+    trim: true
   },
   content: {
     type: String,
-    required: [true, 'Content is required'],
+    required: [true, 'Content is required']
   },
   coverImage: {
-    url: {
-      type: String,
-      required: false,
-    },
-    publicId: {
-      type: String,
-      required: false,
-    },
+    url: String,      // Cloudinary secure URL
   },
-  tags: {
-    type: [String],
-    default: [],
-  },
+  tags: [String],
   excerpt: {
     type: String,
-    trim: true,
-    default: '',
+    trim: true
   },
   status: {
     type: String,
     enum: ['published', 'draft'],
-    default: 'published',
+    default: 'published'
   },
   author: {
     type: String,
-    default: 'unknown',
-    trim: true,
+    ref: 'User',
+    required: true,
+    default: 'unknown'
   },
-}, {
-  timestamps: true // auto-manages createdAt & updatedAt
+  createdAt: {
+    type: Date,
+    default: Date.now
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now
+  }
 });
 
-// Optional: Update updatedAt on manual updates if timestamps not used
-// PostSchema.pre('save', function (next) {
-//   this.updatedAt = Date.now();
-//   next();
-// });
+PostSchema.pre('save', function(next) {
+  this.updatedAt = Date.now();
+  next();
+});
 
 module.exports = mongoose.models.Post || mongoose.model('Post', PostSchema);
