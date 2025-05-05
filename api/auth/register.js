@@ -1,29 +1,17 @@
-const express = require("express");
-const dotenv = require("dotenv");
-const connectDB = require("./config/db");
-const blogRoutes = require("./routes/blogRoutes");
-const cors = require("cors");
-const mongoose = require('mongoose');
-const path = require('path'); 
-const Post = require('./models/Blog');
-const cloudinary = require('cloudinary').v2;
-const multer = require('multer');
-const { MongoClient } = require('mongodb');
-dotenv.config();
-connectDB();
+// File: api/auth/register.js (Next.js API route example)
+import { MongoClient } from 'mongodb';
+import bcrypt from 'bcryptjs';
 
-const app = express();
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log('MongoDB connected'))
-  .catch(err => console.error(err));
+// MongoDB Connection String
+const uri = process.env.MONGODB_URI;
+const dbName = process.env.MONGODB_DB || 'blog_database';
 
-// Configure Cloudinary
+export default async function handler(req, res) {
+  // Only allow POST requests
+  if (req.method !== 'POST') {
+    return res.status(405).json({ message: 'Method not allowed' });
+  }
 
-
-app.post('/api/auth/register', async (req, res) => {
   try {
     // Extract user data from request body
     const { fullName, username, email, password } = req.body;
@@ -34,7 +22,7 @@ app.post('/api/auth/register', async (req, res) => {
     }
 
     // Connect to MongoDB
-    const client = new MongoClient(process.env.MONGO_URI);
+    const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
     await client.connect();
     
     const db = client.db(dbName);
@@ -88,16 +76,4 @@ app.post('/api/auth/register', async (req, res) => {
     console.error('Registration error:', error);
     return res.status(500).json({ message: 'Internal server error' });
   }
-});
-
-
-
-app.use('/api/blogs', blogRoutes);
-
-app.get('/', (req, res) => {
-  res.send('I can run!');
-});
-
-app.listen(5000, () => {
-  console.log('Server is running on port 5000');
-});
+}

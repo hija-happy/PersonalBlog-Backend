@@ -7,7 +7,6 @@ const { upload, cloudinary } = require('../config/cloudinary');
 // ✅ Create Blog Post
 router.post('/', upload.single('file'), async (req, res) => {
   try {
-    console.log(req.file)
     if (!req.file) {
       return res.status(400).json({ error: 'No image file uploaded' });
     }
